@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.JavascriptInterface;
@@ -21,6 +22,7 @@ public class SmartPortalActivity extends Activity {
 
 	private String rfid = "";
 	private Context ctx;
+	WebView myWebView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +34,7 @@ public class SmartPortalActivity extends Activity {
         rfid = settings.getString("rfid", "");
         String url = settings.getString("url", "http://192.168.0.67");
         
-        WebView myWebView = (WebView) findViewById(R.id.webview);
+        myWebView = (WebView) findViewById(R.id.webview);
         myWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
         myWebView.setWebViewClient(new MyWebViewClient());
         myWebView.loadUrl(url);
@@ -62,8 +64,31 @@ public class SmartPortalActivity extends Activity {
 			startActivity(intent);
 			return true;
 		}
+		
+		if (id == R.id.menu_reloadPage) {
+			myWebView.reload();
+			return true;
+		}
 		return super.onOptionsItemSelected(item);
 	}
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(event.getAction() == KeyEvent.ACTION_DOWN){
+            switch(keyCode)
+            {
+            case KeyEvent.KEYCODE_BACK:
+                if(myWebView.canGoBack()){
+                    myWebView.goBack();
+                }else{
+                   finish();
+                }
+                return true;
+            }
+
+        }
+        return super.onKeyDown(keyCode, event);
+    }
     public class WebAppInterface {
         Context mContext;
 
