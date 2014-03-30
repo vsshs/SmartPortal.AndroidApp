@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -100,7 +101,21 @@ public class SmartPortalActivity extends Activity {
         @JavascriptInterface
         public String getRfidTag()
         {
+        	Log.d("", "Get RFID TAG called");
         	return rfid;
+        }
+        
+        
+        @JavascriptInterface
+        public void setRfidTag(String tag)
+        {
+        	
+        	Log.d("NEW TAG", tag);
+        	SharedPreferences settings = getSharedPreferences(Settings.PREFS_NAME, 0);
+        	Editor e = settings.edit();
+        	e.putString("rfid", tag);
+        	e.commit();
+        	
         }
     }
    
